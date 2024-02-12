@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do List</title>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    
+    <div id="user-login">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Enter your username">
+        <button id="login-button">Login</button>
+    </div>
+
+    <div id="to-do-list" style="display: none;">
+        <h2>Welcome, <span id="user-name"></span>!</h2>
+        <input type="text" id="task" placeholder="Enter a new task">
+        <button id="add-task-button">Add Task</button>
+        <ul id="task-list"></ul>
+        <button id="logout-button">Logout</button>
+    </div>
+
+    <script>
+        // Check if the user is already logged in.
+        const isLoggedIn = getCookie('userLoggedIn');
+ 
+        if (isLoggedIn === 'true') {
+            showToDoList();
+        } else {
+            showLogin();
+        }
+
+        // Login button click event.
+        document.getElementById('login-button').addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            if (username.trim() !== '') {
+                setCookie('userLoggedIn', 'true', 1); // Set a cookie to indicate the user is logged in.
+                setCookie('username', username, 1); // Set a cookie to store the username.
+                showToDoList();
+            }
+        });
+
+        // Add task button click event.
+        document.getElementById('add-task-button').addEventListener('click', function() {
+            const task = document.getElementById('task').value;
+            if (task.trim() !== '') {
+                addTask(task);
+                document.getElementById('task').value = '';
+            }
+        });
+
+        // Logout button click event.
+        document.getElementById('logout-button').addEventListener('click', function() {
+            deleteCookie('userLoggedIn'); // Delete the 'userLoggedIn' cookie to log the user out.
+            deleteCookie('username'); // Delete the 'username' cookie.
+            showLogin();
+        });
+
+        // Function to show the login form.
+        function showLogin() {
+            document.getElementById('user-login').style.display = 'block';
+            document.getElementById('to-do-list').style.display = 'none';
+        }
+
+        // Function to show the to-do list.
+        function showToDoList() {
+            document.getElementById('user-name').textContent = getCookie('username');
+            document.getElementById('user-login').style.display = 'none';
+            document.getElementById('to-do-list').style.display = 'block';
+            loadTasks();
+        }
+
+        // Function to add a task to the list.
+        function addTask(task) {
+            const ul = document.getElementById('task-list');
+            const li = document.createElement('li');
+            li.textContent = task;
+            ul.appendChild(li);
+        }
+
+        // Function to load tasks from cookies (if any).
+        function loadTasks() {
+            // You can implement this function to load and display tasks from cookies.
+            // Example: const tasks = getCookie('tasks');
+            // Then parse the tasks and display them in the to-do list.
+        }
+
+        // Functions to manage cookies.
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = 'expires=' + date.toUTCString();
+            document.cookie = name + '=' + value + '; ' + expires + '; path=/';
+        }
+
+        function getCookie(name) {
+            const cname = name + '=';
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(cname) == 0) {
+                    return c.substring(cname.length, c.length);
+                }
+            }
+            return '';
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        }
+    </script>
+</body>
+</html>
